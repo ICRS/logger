@@ -18,26 +18,12 @@ spec:
         ports:
         - containerPort: 5000  # Port your Python application is listening on
         imagePullPolicy: "Always"
-        volumeMounts:
-          - name: postgres-ini 
-            mountPath: /app/postgres.ini
-            subPath: postgres.ini
-            readOnly: true
-          - name: discord-bot-secret
-            mountPath: /app/settings.json
-            subPath: settings.json
-            readOnly: true
         env:
           - name: BOT_TOKEN
             valueFrom:
               secretKeyRef:
                 name: icrs-logger-secret 
                 key: discord_token
-          - name: DISCORD_WEBHOOK_URL
-            valueFrom:
-              secretKeyRef:
-                name: icrs-logger-secret
-                key: logger_webhook_url
           - name: DISCORD_WEBHOOK_URL
             valueFrom:
               secretKeyRef:
@@ -88,3 +74,13 @@ spec:
               secretKeyRef:
                 name: icrs-logger-secret
                 key: redis_port
+          - name: DISABLE_INVITE_COMMANDS
+            value: "false"
+          - name: ENABLE_TEXT_COMMANDS
+            value: "\"true\""
+          - name: ENABLE_TEXT_COMMANDS
+            value: "\"true\""
+          - name: MESSAGE_BATCH_SIZE
+            value: "10"
+
+
