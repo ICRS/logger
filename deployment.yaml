@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icrs-logger-bot-deployment
+spec:
+  replicas: 1  # Number of replicas you want to run
+  selector:
+    matchLabels:
+      app: icrs-logger-bot
+  template:
+    metadata:
+      labels:
+        app: icrs-logger-bot
+    spec:
+      containers:
+      - name: icrs-logger-bot
+        image: localhost:32000/icrs-logger-bot  # Replace with your Python Docker image and tag
+        ports:
+        - containerPort: 5000  # Port your Python application is listening on
+        imagePullPolicy: "Always"
+        volumeMounts:
+          - name: postgres-ini 
+            mountPath: /app/postgres.ini
+            subPath: postgres.ini
+            readOnly: true
+          - name: discord-bot-secret
+            mountPath: /app/settings.json
+            subPath: settings.json
+            readOnly: true
+        env:
+          - name: BOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret 
+                key: discord_token
+          - name: DISCORD_WEBHOOK_URL
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: logger_webhook_url
+          - name: DISCORD_WEBHOOK_URL
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: logger_webhook_url
+          - name: AES_KEY
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: aes_key
+          - name: CREATOR_IDS
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: discord_admin_id
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: pguser
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: pgpassword
+          - name: INIT_COMMANDS_GUILD_ID
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: discord_guild_id
+          - name: PGHOST
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: pghost
+          - name: PGDATABASE
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: pgdatabase
+          - name: REDIS_HOST
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: redis_host
+          - name: REDIS_PORT
+            valueFrom:
+              secretKeyRef:
+                name: icrs-logger-secret
+                key: redis_port
